@@ -1,3 +1,0 @@
-/home/orenty7/Documents/mipt_cpp/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/orenty7/Documents/mipt_cpp/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/orenty7/Documents/mipt_cpp/cmake-build-debug/CMakeFiles/mipt_cpp.dir
