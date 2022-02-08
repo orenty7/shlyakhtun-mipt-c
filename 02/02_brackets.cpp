@@ -26,37 +26,37 @@ using namespace std;
 
 
 int main() {
-  int n;
-  cin >> n;
-  
-  int stack = 0;
-  bool is_correct = true;
-
-  for (int i = 0; i < n; i ++) {
-    char tmp;
-    cin >> tmp;
-
-    if (tmp == '(')
-      stack ++;
-    else if (tmp == ')')
-      stack --;
-    else {
-      cerr << RED "Incorrect input" RESET << endl;
-      return 5;
+    int n;
+    cin >> n;
+    
+    int stack = 0;
+    bool is_correct = true;
+    
+    for (int i = 0; i < n; i ++) {
+	char tmp;
+	cin >> tmp;
+	
+	if (tmp == '(')
+	    stack ++;
+	else if (tmp == ')')
+	    stack --;
+	else {
+	    cerr << RED "Incorrect input" RESET << endl;
+	    return 5;
+	}
+	
+	if (stack < 0) {
+	    is_correct = false;
+	    break;
+	}
     }
-
-    if (stack < 0) {
-      is_correct = false;
-      break;
-    }
-  }
-  
-  if (is_correct && !stack)
-    cout << GREEN "correct" RESET << endl;
-  else if (is_correct)
-    cout << YELLOW "correct, but no closing bracket" RESET << endl;
-  else
-    cout << RED "incorrect" RESET << endl;
-  
-  return 0;
+    
+    if (is_correct && !stack)
+	cout << GREEN "correct" RESET << endl;
+    else if (is_correct)
+	cout << YELLOW "correct, but no closing bracket" RESET << endl;
+    else
+	cout << RED "incorrect" RESET << endl;
+    
+    return 0;
 }
