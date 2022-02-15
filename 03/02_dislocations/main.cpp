@@ -2,7 +2,6 @@
 
 #include "config.h"
 #include "state.h"
-#include "directions.h"
 #include "simulation.h"
 
 using namespace std;

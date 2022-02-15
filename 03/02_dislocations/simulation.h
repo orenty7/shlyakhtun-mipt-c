@@ -3,7 +3,6 @@
 
 #include "state.h"
 #include "config.h"
-#include "directions.h"
 
 struct DirectionCell {
     bool is_cell;

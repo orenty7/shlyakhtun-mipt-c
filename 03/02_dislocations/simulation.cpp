@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include "state.h"
-#include "directions.h"
 
 
 void print_direction_cell(DirectionCell &d_cell) {
