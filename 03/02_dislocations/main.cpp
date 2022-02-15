@@ -11,7 +11,7 @@ int main() {
     
     srand(config.seed);
     
-    Cell **field = init_field(config);
+    Cell **field = init_field<Cell>(config);
 
     
     fill_field(field, config);

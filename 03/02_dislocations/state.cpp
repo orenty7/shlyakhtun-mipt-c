@@ -23,12 +23,18 @@ Direction random_direction() {
 }
 
 
-Cell** init_field(Config config) {
-    Cell **field = new Cell*[config.height];
+template<typename T> 
+T** init_field(Config config) {
+    T **field = new T*[config.height];
     for(int i = 0; i < config.height; i ++)
-	field[i] = new Cell[config.width];    
+	field[i] = new T[config.width];    
     return field;
 }
+
+template Cell** init_field(Config);
+template DirectionCell** init_field(Config);
+
+
 
 void fill_field(Cell **field, Config config) {
     for(int y = 0; y < config.height; y ++) {
@@ -74,7 +80,17 @@ void print_direction(Direction direction) {
 
 
 
-void print_field(Cell **field, Config config) {
+void print_cell(DirectionCell &d_cell) {
+    if(d_cell.is_cell) {
+	print_cell(d_cell.cell);
+    } else {
+	print_direction(d_cell.direction);
+    }
+}
+
+
+template<typename T>
+void print_field(T **field, Config config) {
 
     std::cout << "▗";
     for(int i = 0; i < config.width; i ++)
@@ -92,6 +108,9 @@ void print_field(Cell **field, Config config) {
     std::cout << "▝";
     for(int i = 0; i < config.width; i ++)
 	std::cout << "▀";
-    std::cout << "▘" << '\n';
-    
+    std::cout << "▘" << '\n';    
 }
+
+
+template void print_field<Cell>(Cell **, Config);
+template void print_field<DirectionCell>(DirectionCell **, Config);

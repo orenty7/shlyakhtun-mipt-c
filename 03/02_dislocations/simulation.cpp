@@ -4,49 +4,8 @@
 #include "state.h"
 
 
-void print_direction_cell(DirectionCell &d_cell) {
-    if(d_cell.is_cell) {
-	print_cell(d_cell.cell);
-    } else {
-	print_direction(d_cell.direction);
-    }
-}
-
-void print_field(DirectionCell **field, Config config) {
-    
-    std::cout << "┌";
-    for(int i = 0; i < config.width; i ++)
-	std::cout << "─";
-    std::cout << "┐" << '\n';
-    
-    for(int y = 0; y < config.height; y ++) {
-	std::cout << "│";
-	for(int x = 0; x < config.width; x ++) {
-	    print_direction_cell(field[y][x]);
-	}
-	std::cout << "│" << '\n';
-    }	    
-
-    std::cout << "└";
-    for(int i = 0; i < config.width; i ++)
-	std::cout << "─";
-    std::cout << "┘" << '\n';
-    
-}
-
-
-
-DirectionCell** init_d_field(Config config) {
-    DirectionCell **d_field = new DirectionCell*[config.height];
-    for(int i = 0; i < config.height; i ++)
-	d_field[i] = new DirectionCell[config.width];    
-    return d_field;
-}
-
-
-
 DirectionCell** dislocation_moves(Cell **field, Config config) {
-    DirectionCell **d_field = init_d_field(config);
+    DirectionCell **d_field = init_field<DirectionCell>(config);
         
     for(int y = 0; y < config.height; y ++) {
 	for(int x = 0; x < config.width; x ++) {
@@ -105,7 +64,7 @@ Cell** move(DirectionCell **d_field, Config config) {
 	}
     }
 
-    Cell **field = init_field(config);
+    Cell **field = init_field<Cell>(config);
 
     for(int y = 0; y < config.height; y ++) {
 	for(int x = 0; x < config.width; x ++) {
