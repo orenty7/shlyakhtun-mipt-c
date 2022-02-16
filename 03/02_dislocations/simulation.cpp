@@ -4,113 +4,94 @@
 #include "state.h"
 
 
-DirectionCell** dislocation_moves(Cell **field, Config config) {
-    DirectionCell **d_field = init_field<DirectionCell>(config);
-        
+void dislocation_moves(Cell **field, Config config) {        
     for(int y = 0; y < config.height; y ++) {
 	for(int x = 0; x < config.width; x ++) {
-	    if(field[y][x] != Cell::Floating) {
-		d_field[y][x] = {.is_cell = true, .cell = field[y][x]};
-	    } else {
-		d_field[y][x] = {.is_cell = false, .direction = random_direction()};
-	    }
+	    if(field[y][x].is_moving || field[y][x].type != Type::Floating)
+		continue;
+	    
+	    field[y][x] = {.is_moving = true, .direction = random_direction()};	    
 	}
     }	    
-
-    return d_field;
 }
 
 
-Cell** move(DirectionCell **d_field, Config config) {
+void move(Cell **field, Config config) {
     
     for(int y = 0; y < config.height; y ++) {
 	for(int x = 0; x < config.width; x ++) {
-	    DirectionCell d_cell = d_field[y][x];
-	    if(d_cell.is_cell)
+	    Cell cell = field[y][x];
+
+	    if(!cell.is_moving)
 		continue;
-	    Direction direction = d_cell.direction;
+
+	    Direction direction = cell.direction;
 	    
 	    if(direction == Direction::Up) {
-		if(d_field[y - 1][x].is_cell && d_field[y - 1][x].cell == Cell::Empty) {
-		    d_field[y - 1][x] = { .is_cell = true, .cell = Cell::Floating};
-		    d_field[y][x] = { .is_cell = true, .cell = Cell::Empty };
+		if(field[y - 1][x].is_moving || field[y - 1][x].type != Type::Empty) {
+		    field[y][x] = { .is_moving = false, .type = Type::Fixed};
 		} else {
-		    d_field[y][x] = { .is_cell = true, .cell = Cell::Fixed};
+		    field[y - 1][x] = { .is_moving = false, .type = Type::Floating};
+		    field[y][x] = { .is_moving = false, .type = Type::Empty };
 		}		    	    
 	    } else if(direction == Direction::Down) {
-		if(d_field[y + 1][x].is_cell && d_field[y + 1][x].cell == Cell::Empty) {
-		    d_field[y + 1][x] = { .is_cell = true, .cell = Cell::Floating};
-		    d_field[y][x] = { .is_cell = true, .cell = Cell::Empty };
+		if(field[y + 1][x].is_moving || field[y + 1][x].type != Type::Empty) {
+		    field[y][x] = { .is_moving = false, .type = Type::Fixed};
 		} else {
-		    d_field[y][x] = { .is_cell = true, .cell = Cell::Fixed};
+		    field[y + 1][x] = { .is_moving = false, .type = Type::Floating};
+		    field[y][x] = { .is_moving = false, .type = Type::Empty };
 		}		    	    
 	    } else if(direction == Direction::Right) {
-		if(d_field[y][x + 1].is_cell && d_field[y][x + 1].cell == Cell::Empty) {
-		    d_field[y][x + 1] = { .is_cell = true, .cell = Cell::Floating};
-		    d_field[y][x] = { .is_cell = true, .cell = Cell::Empty };
+		if(field[y][x + 1].is_moving || field[y][x + 1].type != Type::Empty) {
+		    field[y][x] = { .is_moving = false, .type = Type::Fixed};
 		} else {
-		    d_field[y][x] = { .is_cell = true, .cell = Cell::Fixed};
+		    field[y][x + 1] = { .is_moving = false, .type = Type::Floating};
+		    field[y][x] = { .is_moving = false, .type = Type::Empty };
 		}		    	    
 	    } else {
-		if(d_field[y][x - 1].is_cell && d_field[y][x - 1].cell == Cell::Empty) {
-		    d_field[y][x - 1] = { .is_cell = true, .cell = Cell::Floating};
-		    d_field[y][x] = { .is_cell = true, .cell = Cell::Empty };
+		if(field[y][x - 1].is_moving || field[y][x - 1].type != Type::Empty) {
+		    field[y][x] = { .is_moving = false, .type = Type::Fixed};
 		} else {
-		    d_field[y][x] = { .is_cell = true, .cell = Cell::Fixed};
+		    field[y][x + 1] = { .is_moving = false, .type = Type::Floating};
+		    field[y][x] = { .is_moving = false, .type = Type::Empty };
 		}		    	    
-
-	    }
-
-	}
-    }
-
-    Cell **field = init_field<Cell>(config);
-
-    for(int y = 0; y < config.height; y ++) {
-	for(int x = 0; x < config.width; x ++) {
-	    field[y][x] = d_field[y][x].cell;
-
-	    if(!d_field[y][x].is_cell) {
-		std::cerr << "Something went wrong\n";
 	    }
 	}
     }
-
-    return field;    
 }
 
 
 void freeze(Cell **field, Config config) {
     for(int x = 0; x < config.width; x ++) 
-	if(field[0][x] == Cell::Floating)
-	    field[0][x] = Cell::Fixed;
+	if(field[0][x].type == Type::Floating)
+	    field[0][x].type = Type::Fixed;
     
     for(int x = 0; x < config.width; x ++) 
-	if(field[config.height - 1][x] == Cell::Floating)
-	    field[config.height - 1][x] = Cell::Fixed;
+	if(field[config.height - 1][x].type == Type::Floating)
+	    field[config.height - 1][x].type = Type::Fixed;
 
     for(int y = 0; y < config.height; y ++) 
-	if(field[y][0] == Cell::Floating)
-	    field[y][0] = Cell::Fixed;
+	if(field[y][0].type == Type::Floating)
+	    field[y][0].type = Type::Fixed;
 
     for(int y = 0; y < config.height; y ++) 
-	if(field[y][config.width - 1] == Cell::Floating)
-	    field[y][config.width - 1] = Cell::Fixed;
+	if(field[y][config.width - 1].type == Type::Floating)
+	    field[y][config.width - 1].type = Type::Fixed;
 
 
     for(int y = 1; y < config.height - 1; y ++) {
 	for(int x = 1; x < config.width - 1; x ++) {
-	    if(field[y][x] != Cell::Floating)
+	    if(field[y][x].type != Type::Floating)
 		continue;
 	    
-	    if(field[y - 1][x] != Cell::Empty)
-		field[y][x] = Cell::Fixed;
-	    else if(field[y + 1][x] != Cell::Empty)
-		field[y][x] = Cell::Fixed;
-	    else if(field[y][x + 1] != Cell::Empty)
-		field[y][x] = Cell::Fixed;
-	    else if(field[y][x - 1] != Cell::Empty)
-		field[y][x] = Cell::Fixed;	    
+	    if(field[y - 1][x].type != Type::Empty)
+		field[y][x].type = Type::Fixed;
+	    else if(field[y + 1][x].type != Type::Empty)
+		field[y][x].type = Type::Fixed;
+	    else if(field[y][x + 1].type != Type::Empty)
+		field[y][x].type = Type::Fixed;
+	    else if(field[y][x - 1].type != Type::Empty)
+		field[y][x].type = Type::Fixed;	    
 	}
     }
 }
@@ -118,7 +99,7 @@ void freeze(Cell **field, Config config) {
 bool is_end(Cell **field, Config config) {
     for(int y = 0; y < config.height; y ++) 
 	for(int x = 0; x < config.width; x ++) 
-	    if(field[y][x] == Cell::Floating) 
+	    if(field[y][x].type == Type::Floating) 
 		return false;
 
     return true;

@@ -3,32 +3,27 @@
 
 #include "config.h"
 
-enum class Cell {Empty, Fixed, Floating};
+enum class Type {Empty, Fixed, Floating};
 enum class Direction {Up, Right, Down, Left};
 
-struct DirectionCell {
-    bool is_cell;
+struct Cell {
+    bool is_moving;
     union {
-	Cell cell;
+	Type type;
 	Direction direction;
     };
 };
 
 
-bool random_cell(float);
+bool random_bool(float);
 Direction random_direction();
 
-template<typename T>
-T** init_field(Config);
-
-
+Cell** init_field(Config);
 void fill_field(Cell**, Config);
 
-
+void print_type(Type &);
+void print_direction(Direction &);
 void print_cell(Cell &);
-void print_direction(Direction);
-
-template<typename T>
-void print_field(T **, Config);
+void print_field(Cell **, Config);
 
 #endif

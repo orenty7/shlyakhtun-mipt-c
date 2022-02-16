@@ -4,7 +4,7 @@
 #include "config.h"
 
 
-bool random_cell(float prob) {
+bool random_bool(float prob) {
     return ((float) rand()) / ((float) RAND_MAX) < prob;
 }
 
@@ -23,37 +23,32 @@ Direction random_direction() {
 }
 
 
-template<typename T> 
-T** init_field(Config config) {
-    T **field = new T*[config.height];
+
+Cell** init_field(Config config) {
+    Cell **field = new Cell*[config.height];
     for(int i = 0; i < config.height; i ++)
-	field[i] = new T[config.width];    
+	field[i] = new Cell[config.width];    
     return field;
 }
 
-template Cell** init_field(Config);
-template DirectionCell** init_field(Config);
-
-
 
 void fill_field(Cell **field, Config config) {
-    for(int y = 0; y < config.height; y ++) {
-	for(int x = 0; x < config.width; x ++) {
-	    if(random_cell(config.probability))
-		field[y][x] = Cell::Floating;
+    for(int y = 0; y < config.height; y ++) 
+	for(int x = 0; x < config.width; x ++)
+	    if(random_bool(config.probability))
+		field[y][x] = { .is_moving = false, .type = Type::Floating };
 	    else
-		field[y][x] = Cell::Empty;
-	}
-    }
+		field[y][x] = { .is_moving = false, .type = Type::Empty };
+
     
 }
 
-void print_cell(Cell &cell) {
-    switch(cell) {
-    case Cell::Empty:
+void print_type(Type &type) {
+    switch(type) {
+    case Type::Empty:
 	std::cout << ' ';
 	break;
-    case Cell::Fixed:
+    case Type::Fixed:
 	std::cout << '#';
 	break;
     default:
@@ -61,7 +56,7 @@ void print_cell(Cell &cell) {
     }
 }
 
-void print_direction(Direction direction) {
+void print_direction(Direction &direction) {
     switch(direction) {
     case Direction::Up:
 	std::cout << "↑";
@@ -80,17 +75,16 @@ void print_direction(Direction direction) {
 
 
 
-void print_cell(DirectionCell &d_cell) {
-    if(d_cell.is_cell) {
-	print_cell(d_cell.cell);
+void print_cell(Cell &cell) {
+    if(cell.is_moving) {
+	print_direction(cell.direction);
     } else {
-	print_direction(d_cell.direction);
+	print_type(cell.type);
     }
 }
 
 
-template<typename T>
-void print_field(T **field, Config config) {
+void print_field(Cell **field, Config config) {
 
     std::cout << "▗";
     for(int i = 0; i < config.width; i ++)
@@ -110,7 +104,3 @@ void print_field(T **field, Config config) {
 	std::cout << "▀";
     std::cout << "▘" << '\n';    
 }
-
-
-template void print_field<Cell>(Cell **, Config);
-template void print_field<DirectionCell>(DirectionCell **, Config);

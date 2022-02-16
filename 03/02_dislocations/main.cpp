@@ -11,20 +11,21 @@ int main() {
     
     srand(config.seed);
     
-    Cell **field = init_field<Cell>(config);
+    Cell **field = init_field(config);
 
     
     fill_field(field, config);
     print_field(field, config);
+    
     freeze(field, config);
     
     while(!is_end(field, config)) {	   
 	print_field(field, config);
-	DirectionCell **d_field = dislocation_moves(field, config);
+	dislocation_moves(field, config);
 
-	print_field(d_field, config);
+	print_field(field, config);
 	
-	field = move(d_field, config);
+	move(field, config);
 
 	freeze(field, config);
     }
