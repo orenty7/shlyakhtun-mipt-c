@@ -16,46 +16,52 @@ void dislocation_moves(Cell **field, Config config) {
 }
 
 
+void move_cell(Cell **field, Config config, Point start) {
+    Cell cell = field[start.y][start.x];
+    if(!cell.is_moving)
+	return;
+
+    Direction direction = cell.direction;
+
+    Point end;
+    end = start;
+    
+    if(direction == Direction::Up) {
+	end.y -= 1; 
+    } else if (direction == Direction::Down) {
+	end.y += 1;
+    } else if (direction == Direction::Left) {
+	end.x -= 1;
+    } else {
+	end.x += 1;
+    }
+
+    if(end.y < 0 || end.y >= config.height || \
+       end.x < 0 || end.x >= config.width ) {
+	std::cerr << "Something went wrong. Cell near to border didn't freezed, but it must have\n";
+	return;	
+    }
+
+    if(field[end.y][end.x].is_moving) {
+	std::cerr << "Something went wrong. Two moving cell near to one another.";
+	std::cerr << "They must be freezed, but it don't\n";
+	return;
+    }
+
+    if(field[end.y][end.x].type == Type::Empty) {		    		    
+	field  [end.y]  [end.x] = { .is_moving = false, .type = Type::Floating};
+	field[start.y][start.x] = { .is_moving = false, .type = Type::Empty };		    
+    } else {
+	field[start.y][start.x] = { .is_moving = false, .type = Type::Fixed };
+    }		    	    	
+    
+}
+
 void move(Cell **field, Config config) {
     
     for(int y = 0; y < config.height; y ++) {
 	for(int x = 0; x < config.width; x ++) {
-	    Cell cell = field[y][x];
-
-	    if(!cell.is_moving)
-		continue;
-
-	    Direction direction = cell.direction;
-	    
-	    if(direction == Direction::Up) {
-		if(field[y - 1][x].is_moving || field[y - 1][x].type != Type::Empty) {
-		    field[y][x] = { .is_moving = false, .type = Type::Fixed};
-		} else {
-		    field[y - 1][x] = { .is_moving = false, .type = Type::Floating};
-		    field[y][x] = { .is_moving = false, .type = Type::Empty };
-		}		    	    
-	    } else if(direction == Direction::Down) {
-		if(field[y + 1][x].is_moving || field[y + 1][x].type != Type::Empty) {
-		    field[y][x] = { .is_moving = false, .type = Type::Fixed};
-		} else {
-		    field[y + 1][x] = { .is_moving = false, .type = Type::Floating};
-		    field[y][x] = { .is_moving = false, .type = Type::Empty };
-		}		    	    
-	    } else if(direction == Direction::Right) {
-		if(field[y][x + 1].is_moving || field[y][x + 1].type != Type::Empty) {
-		    field[y][x] = { .is_moving = false, .type = Type::Fixed};
-		} else {
-		    field[y][x + 1] = { .is_moving = false, .type = Type::Floating};
-		    field[y][x] = { .is_moving = false, .type = Type::Empty };
-		}		    	    
-	    } else {
-		if(field[y][x - 1].is_moving || field[y][x - 1].type != Type::Empty) {
-		    field[y][x] = { .is_moving = false, .type = Type::Fixed};
-		} else {
-		    field[y][x + 1] = { .is_moving = false, .type = Type::Floating};
-		    field[y][x] = { .is_moving = false, .type = Type::Empty };
-		}		    	    
-	    }
+	    move_cell(field, config, {x, y});
 	}
     }
 }

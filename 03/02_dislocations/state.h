@@ -6,6 +6,10 @@
 enum class Type {Empty, Fixed, Floating};
 enum class Direction {Up, Right, Down, Left};
 
+struct Point {
+    int x, y;
+};
+
 struct Cell {
     bool is_moving;
     union {
