@@ -22,12 +22,11 @@ struct Cell {
 bool random_bool(float);
 Direction random_direction();
 
-Cell** init_field(Config);
-void fill_field(Cell**, Config);
+void fill_field(Cell (&)[HEIGHT][WIDTH]);
 
 void print_type(Type &);
 void print_direction(Direction &);
 void print_cell(Cell &);
-void print_field(Cell **, Config);
+void print_field(Cell (&)[HEIGHT][WIDTH]);
 
 #endif

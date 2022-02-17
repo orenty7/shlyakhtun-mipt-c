@@ -20,20 +20,21 @@ Direction random_direction() {
     }
 }
 
-Cell **init_field(Config config) {
-    Cell **field = new Cell *[config.height];
-    for (int i = 0; i < config.height; i++)
-        field[i] = new Cell[config.width];
-    return field;
-}
 
-void fill_field(Cell **field, Config config) {
-    for (int y = 0; y < config.height; y++)
-        for (int x = 0; x < config.width; x++)
-            if (random_bool(config.probability))
-                field[y][x] = {.is_moving = false, .type = Type::Floating};
-            else
-                field[y][x] = {.is_moving = false, .type = Type::Empty};
+
+void fill_field(Cell (&field)[HEIGHT][WIDTH]) {
+    for(int i = 0; i < DISLOCATIONS; i ++) {
+        bool generated = false;
+        while(!generated) {
+            int x = rand() % WIDTH;
+            int y = rand() % HEIGHT;
+
+            if(field[y][x].type == Type::Empty) {
+                field[y][x].type = Type::Floating;
+                generated = true;
+            }
+        }
+    }
 }
 
 void print_type(Type &type) {
@@ -74,23 +75,23 @@ void print_cell(Cell &cell) {
     }
 }
 
-void print_field(Cell **field, Config config) {
+void print_field(Cell (&field)[HEIGHT][WIDTH]) {
 
     std::cout << "▗";
-    for (int i = 0; i < config.width; i++)
+    for (int i = 0; i < WIDTH; i++)
         std::cout << "▄";
     std::cout << "▖" << '\n';
 
-    for (int y = 0; y < config.height; y++) {
+    for (int y = 0; y < HEIGHT; y++) {
         std::cout << "▐";
-        for (int x = 0; x < config.width; x++) {
+        for (int x = 0; x < WIDTH; x++) {
             print_cell(field[y][x]);
         }
         std::cout << "▌" << '\n';
     }
 
     std::cout << "▝";
-    for (int i = 0; i < config.width; i++)
+    for (int i = 0; i < WIDTH; i++)
         std::cout << "▀";
     std::cout << "▘" << '\n';
 }

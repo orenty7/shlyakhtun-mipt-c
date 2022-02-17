@@ -1,4 +1,5 @@
 #include <iostream>
+#include <time.h>
 
 #include "config.h"
 #include "simulation.h"
@@ -7,26 +8,30 @@
 using namespace std;
 
 int main() {
-    Config config = read_config();
+    srand(time(NULL));
 
-    srand(config.seed);
+    Cell field[HEIGHT][WIDTH];
 
-    Cell **field = init_field(config);
-
-    fill_field(field, config);
-    print_field(field, config);
-
-    freeze(field, config);
-
-    while (!is_end(field, config)) {
-        print_field(field, config);
-        dislocation_moves(field, config);
-
-        print_field(field, config);
-
-        move(field, config);
-
-        freeze(field, config);
+    for(int y = 0; y < HEIGHT; y ++) {
+        for(int x = 0; x < WIDTH; x ++) {
+            field[y][x] = { .is_moving = false, .type = Type::Empty};
+        }
     }
-    print_field(field, config);
+
+    fill_field(field);
+    print_field(field);
+
+    freeze(field);
+
+    while (!is_end(field)) {
+        print_field(field);
+        dislocation_moves(field);
+
+        print_field(field);
+
+        move(field);
+
+        freeze(field);
+    }
+    print_field(field);
 }
