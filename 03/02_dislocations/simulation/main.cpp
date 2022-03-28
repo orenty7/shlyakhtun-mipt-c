@@ -63,7 +63,7 @@ Result run(Config &config) {
 
 int main() {
     using namespace std::chrono;
-    
+
     Config config = {.dislocations = 0};
 #if !QUIET
     cout << "Enter number of dislocations: ";
@@ -81,6 +81,6 @@ int main() {
 #if QUIET
         cout << quiet_run(config).steps << "\n";
 #else
-        cout << "Steps: " run(config).steps << "\n";
+        cout << "Steps: " << run(config).steps << "\n";
 #endif
 }
