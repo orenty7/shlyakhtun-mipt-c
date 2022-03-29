@@ -25,7 +25,6 @@ template<typename T> T pop_front(List<T> *);
 template<typename T> T remove(List<T> *, int);
 
 template<typename T> unsigned int length(List<T> *);
-
 template<typename T> void clear(List<T> *);
 
 
